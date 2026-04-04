@@ -84,6 +84,7 @@ export default function Services() {
         minHeight: '100vh',
         padding: 'clamp(5rem, 12vh, 9rem) clamp(2rem, 10vw, 9rem)',
         position: 'relative',
+        background: '#030303',
       }}
     >
       {/* Subtle top separator */}

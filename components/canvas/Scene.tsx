@@ -1,74 +1,67 @@
 'use client';
 
 import { Suspense } from 'react';
-import { Environment } from '@react-three/drei';
+import { Fog } from 'three';
+import { useThree } from '@react-three/fiber';
+import { useEffect } from 'react';
 import CameraRig from '@/components/three/CameraRig';
 import Logo3D from '@/components/three/Logo3D';
 import LaptopMesh from '@/components/three/LaptopMesh';
 import Particles from '@/components/three/Particles';
 
+function SceneFog() {
+  const { scene } = useThree();
+  useEffect(() => {
+    // Fog starts at z=4 (just behind logo), fully opaque at z=16 away from camera
+    // This hides the laptops while camera is in hero, reveals them as camera approaches
+    scene.fog = new Fog('#030303', 4, 18);
+    return () => { scene.fog = null; };
+  }, [scene]);
+  return null;
+}
+
 export default function Scene() {
   return (
     <>
-      {/* ── Lighting ───────────────────────────────────── */}
-      <ambientLight intensity={0.15} />
-      <directionalLight
-        position={[5, 8, 5]}
-        intensity={1.2}
-        color="#ffffff"
-        castShadow
-        shadow-mapSize={[1024, 1024]}
-      />
-      <pointLight position={[-4, 2, 2]} intensity={2} color="#1a6bff" distance={12} />
-      <pointLight position={[4, -2, -5]} intensity={1.5} color="#0040cc" distance={15} />
+      <SceneFog />
 
-      {/* ── Environment (city HDRI for reflections) ────── */}
-      <Suspense fallback={null}>
-        <Environment preset="city" />
-      </Suspense>
+      {/* Ambient fill */}
+      <ambientLight intensity={0.5} />
+      {/* Main front key light */}
+      <directionalLight position={[0, 5, 10]} intensity={2.5} color="#ffffff" />
+      {/* Blue fill for logo */}
+      <pointLight position={[-3, 1, 7]} intensity={8}  color="#1a6bff" distance={12} />
+      <pointLight position={[ 3, 1, 7]} intensity={5}  color="#4466ff" distance={12} />
+      {/* Laptop 1 lights — tight front illumination */}
+      <pointLight position={[ 0, 3, -5]}  intensity={20} color="#ffffff" distance={10} />
+      <pointLight position={[ 2, 1, -6]}  intensity={10} color="#aaddff" distance={8}  />
+      {/* Laptop 2 lights */}
+      <pointLight position={[ 0, 3, -16]} intensity={20} color="#ffffff" distance={10} />
+      <pointLight position={[-2, 1, -17]} intensity={10} color="#aaddff" distance={8}  />
 
-      {/* ── Scroll-driven camera ───────────────────────── */}
       <CameraRig />
-
-      {/* ── Floating particles ────────────────────────── */}
       <Particles />
 
-      {/* ── Hero 3D logo ──────────────────────────────── */}
       <Suspense fallback={null}>
         <Logo3D />
       </Suspense>
 
-      {/* ── Laptop showcase 1 — Cafe project ──────────── */}
-      {/* Positioned along flight path at z ≈ -7  */}
+      {/* Laptops pushed further back so fog hides them in hero */}
       <Suspense fallback={null}>
         <LaptopMesh
           texturePath="/cafe.webp"
-          position={[0.6, -0.4, -8]}
-          rotation={[0, -0.25, 0]}
+          position={[0.4, -0.5, -10]}
+          rotationY={-0.15}
         />
       </Suspense>
 
-      {/* ── Laptop showcase 2 — Boutique project ─────── */}
-      {/* Positioned along flight path at z ≈ -17 */}
       <Suspense fallback={null}>
         <LaptopMesh
           texturePath="/boutique.webp"
-          position={[-0.6, 0.3, -18]}
-          rotation={[0, 0.25, 0]}
+          position={[-0.4, -0.5, -20]}
+          rotationY={0.15}
         />
       </Suspense>
-
-      {/* ── Ground plane (subtle reflection) ─────────── */}
-      <mesh position={[0, -3.5, -10]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
-        <planeGeometry args={[40, 60]} />
-        <meshPhysicalMaterial
-          color="#050505"
-          metalness={0.8}
-          roughness={0.6}
-          transparent
-          opacity={0.6}
-        />
-      </mesh>
     </>
   );
 }

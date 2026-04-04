@@ -3,34 +3,25 @@
 import { Canvas } from '@react-three/fiber';
 import Scene from '@/components/canvas/Scene';
 
-/**
- * Fixed full-viewport WebGL canvas that persists across all page sections.
- * Rendered behind all DOM content via z-index: -1.
- * Dynamically imported with ssr: false from page.tsx.
- */
 export default function WebGLCanvas() {
   return (
     <div
       style={{
         position: 'fixed',
-        inset: 0,
+        top: 0,
+        left: 0,
+        width: '100vw',
+        height: '100vh',
         zIndex: -1,
         pointerEvents: 'none',
+        background: '#030303',
       }}
     >
       <Canvas
         camera={{ position: [0, 0.3, 8], fov: 55, near: 0.1, far: 100 }}
-        gl={{
-          antialias: true,
-          alpha: false,
-          powerPreference: 'high-performance',
-          toneMapping: 4, // THREE.ACESFilmicToneMapping
-          toneMappingExposure: 1.0,
-        }}
+        gl={{ antialias: true, alpha: false }}
         shadows
-        dpr={[1, 2]}
-        frameloop="always"
-        style={{ background: '#030303' }}
+        dpr={[1, 1.5]}
       >
         <Scene />
       </Canvas>
