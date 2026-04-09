@@ -13,6 +13,10 @@ export default function Footer() {
 
   useEffect(() => {
     const ctx = gsap.context(() => {
+      // Set initial state via GSAP (not inline CSS) so ScrollTrigger
+      // can always override it — avoids elements stuck at opacity:0
+      gsap.set([headingRef.current, contentRef.current], { opacity: 0 });
+
       gsap.fromTo(
         headingRef.current,
         { opacity: 0, y: 50 },
@@ -38,7 +42,14 @@ export default function Footer() {
       );
     }, sectionRef);
 
-    return () => ctx.revert();
+    // Refresh after a tick to ensure ScrollTrigger has correct positions
+    // after Lenis and layout have fully settled
+    const rafId = requestAnimationFrame(() => ScrollTrigger.refresh());
+
+    return () => {
+      cancelAnimationFrame(rafId);
+      ctx.revert();
+    };
   }, []);
 
   return (
@@ -74,7 +85,6 @@ export default function Footer() {
           color: '#f0f0f0',
           maxWidth: '820px',
           marginBottom: 'clamp(3rem, 5vh, 4rem)',
-          opacity: 0,
         }}
       >
         Ready to build something{' '}
@@ -89,7 +99,6 @@ export default function Footer() {
           justifyContent: 'space-between',
           alignItems: 'flex-end',
           gap: '3rem',
-          opacity: 0,
         }}
       >
         {/* Contact CTA */}

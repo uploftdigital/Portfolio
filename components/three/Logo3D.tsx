@@ -5,86 +5,173 @@ import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 
 /*
- * UPLOFT LOGO — clean flat-extruded mark
- * ----------------------------------------
- * Built with 5 pieces, all sharing depth D=0.22:
+ * UPLOFT LOGO — premium 3D mark
+ * ─────────────────────────────
+ *  ▲  arrowhead (4-sided pyramid)
+ *  ║  arrow stem  — glowing blue fresnel shader
+ *  U  two pillars + bottom bar — dark steel with chamfered tops
  *
- *      /\          ← cone arrowhead (4-sided pyramid, tip up)
- *      ||          ← stem (box)
- *   |      |       ← U left and right pillars
- *   |______|       ← U bottom bar
- *
- * Pieces are placed to TOUCH with no gaps:
- *   - Pillar tops at y = +0.85
- *   - Stem bottom at y = +0.85 (exact match)
- *   - Stem top at y = +0.85 + stemH = +1.42
- *   - Cone base (bottom) at y = +1.42 (exact match)
- *   - Cone tip at y = +1.42 + coneH = +1.97
+ * Improvements:
+ *  • Fresnel/rim-glow ShaderMaterial on arrow (blue core → white rim glow)
+ *  • Chamfered pillar tops: thin wide cap gives machined-part bevel illusion
+ *  • Wider U (pillarX 0.80) for traditional share-icon proportions
+ *  • Arrow group bobs upward via Math.sin — reinforces "uploft" concept
  */
+
+// ── Fresnel glow material — arrow (bright blue core, light-blue rim) ────────
+const fresnelArrowMat = new THREE.ShaderMaterial({
+  uniforms: {
+    uCoreColor: { value: new THREE.Color('#1a6bff') },
+    uRimColor:  { value: new THREE.Color('#b0d4ff') },
+    uRimPower:  { value: 2.6 },
+  },
+  vertexShader: `
+    varying vec3 vNormal;
+    varying vec3 vViewDir;
+    void main() {
+      vec4 worldPos = modelMatrix * vec4(position, 1.0);
+      vNormal  = normalize(normalMatrix * normal);
+      vViewDir = normalize(cameraPosition - worldPos.xyz);
+      gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+    }
+  `,
+  fragmentShader: `
+    uniform vec3  uCoreColor;
+    uniform vec3  uRimColor;
+    uniform float uRimPower;
+    varying vec3  vNormal;
+    varying vec3  vViewDir;
+    void main() {
+      float rim     = 1.0 - max(dot(vNormal, vViewDir), 0.0);
+      float fresnel = pow(rim, uRimPower);
+      vec3  color   = mix(uCoreColor, uRimColor, fresnel);
+      gl_FragColor  = vec4(color, 1.0);
+    }
+  `,
+});
+
+// ── Dark steel material — U frame (deep navy core, steel-blue rim) ──────────
+const steelMat = new THREE.ShaderMaterial({
+  uniforms: {
+    uBaseColor: { value: new THREE.Color('#151d55') },
+    uRimColor:  { value: new THREE.Color('#3d5faa') },
+    uRimPower:  { value: 3.5 },
+  },
+  vertexShader: `
+    varying vec3 vNormal;
+    varying vec3 vViewDir;
+    void main() {
+      vec4 worldPos = modelMatrix * vec4(position, 1.0);
+      vNormal  = normalize(normalMatrix * normal);
+      vViewDir = normalize(cameraPosition - worldPos.xyz);
+      gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+    }
+  `,
+  fragmentShader: `
+    uniform vec3  uBaseColor;
+    uniform vec3  uRimColor;
+    uniform float uRimPower;
+    varying vec3  vNormal;
+    varying vec3  vViewDir;
+    void main() {
+      float rim     = 1.0 - max(dot(vNormal, vViewDir), 0.0);
+      float fresnel = pow(rim, uRimPower);
+      vec3  color   = mix(uBaseColor, uRimColor, fresnel * 0.75);
+      gl_FragColor  = vec4(color, 1.0);
+    }
+  `,
+});
+
 export default function Logo3D() {
   const groupRef = useRef<THREE.Group>(null);
+  const arrowRef = useRef<THREE.Group>(null);
 
-  useFrame((_, delta) => {
+  useFrame(({ clock }) => {
     if (groupRef.current) {
-      groupRef.current.rotation.y += delta * 0.28;
+      groupRef.current.rotation.y = clock.elapsedTime * 0.28;
+    }
+    if (arrowRef.current) {
+      // Gentle upward bob — reinforces the "uploft" concept
+      arrowRef.current.position.y = Math.sin(clock.elapsedTime * 1.6) * 0.055;
     }
   });
 
-  const D         = 0.22;   // shared depth
-  const pillarH   = 1.70;   // pillar height
-  const pillarW   = 0.22;   // pillar width
-  const pillarX   = 0.65;   // pillar center X offset
-  const pillarCY  = 0.00;   // pillar center Y
-  const pillarTop = pillarCY + pillarH / 2; // = +0.85
+  // ── Geometry constants ────────────────────────────────────────────────────
+  const D         = 0.22;
+  const pillarH   = 1.50;
+  const pillarW   = 0.22;
+  const pillarX   = 0.80;   // wider U — matches share-icon proportions
+  const pillarCY  = 0.00;
+  const pillarTop = pillarCY + pillarH / 2;   // +0.75
+  const pillarBot = pillarCY - pillarH / 2;   // -0.75
+  const barCY     = pillarBot;
 
-  const stemW     = 0.22;
-  const stemH     = 0.57;
-  const stemCY    = pillarTop + stemH / 2;  // = 0.85 + 0.285 = 1.135
-  const stemTop   = pillarTop + stemH;      // = 1.42
+  // Chamfer caps: thin slab slightly wider than pillar → subtle bevel illusion
+  const chamferH = 0.04;
+  const chamferW = pillarW + 0.07;
 
-  const coneH     = 0.55;
-  const coneR     = 0.32;   // radius (wider than stem for arrowhead look)
-  const coneCY    = stemTop + coneH / 2;    // = 1.42 + 0.275 = 1.695
+  // Arrow stem — runs from bottom bar flush, up through the U opening
+  const stemW      = 0.28;
+  const stemBottom = barCY;
+  const stemAbove  = 0.22;
+  const stemTop    = pillarTop + stemAbove;
+  const stemH      = stemTop - stemBottom;
+  const stemCY     = stemBottom + stemH / 2;
 
-  // Shared materials
-  const pillarMat = { color: '#6677aa', metalness: 0.6, roughness: 0.3,
-    emissive: '#0e1840', emissiveIntensity: 1.2 } as const;
-  const blueMat   = { color: '#1a6bff', emissive: '#1a6bff' as string,
-    emissiveIntensity: 1.5, roughness: 0.05 } as const;
+  // Arrowhead
+  const coneH  = 0.42;
+  const coneR  = 0.28;
+  const coneCY = stemTop + coneH / 2;
 
   return (
     <group ref={groupRef} position={[0.8, 0.0, 5.2]} scale={0.58}>
 
-      {/* ─── LEFT PILLAR ─── */}
+      {/* ── U FRAME ────────────────────────────────────────────────────── */}
+
+      {/* Left pillar */}
       <mesh position={[-pillarX, pillarCY, 0]}>
         <boxGeometry args={[pillarW, pillarH, D]} />
-        <meshStandardMaterial {...pillarMat} />
+        <primitive object={steelMat} attach="material" />
+      </mesh>
+      {/* Left pillar chamfer cap */}
+      <mesh position={[-pillarX, pillarTop + chamferH / 2, 0]}>
+        <boxGeometry args={[chamferW, chamferH, D + 0.02]} />
+        <primitive object={steelMat} attach="material" />
       </mesh>
 
-      {/* ─── RIGHT PILLAR ─── */}
+      {/* Right pillar */}
       <mesh position={[pillarX, pillarCY, 0]}>
         <boxGeometry args={[pillarW, pillarH, D]} />
-        <meshStandardMaterial {...pillarMat} />
+        <primitive object={steelMat} attach="material" />
+      </mesh>
+      {/* Right pillar chamfer cap */}
+      <mesh position={[pillarX, pillarTop + chamferH / 2, 0]}>
+        <boxGeometry args={[chamferW, chamferH, D + 0.02]} />
+        <primitive object={steelMat} attach="material" />
       </mesh>
 
-      {/* ─── BOTTOM BAR ─── */}
-      <mesh position={[0, -(pillarH / 2), 0]}>
+      {/* Bottom bar */}
+      <mesh position={[0, barCY, 0]}>
         <boxGeometry args={[pillarX * 2 + pillarW, pillarW, D]} />
-        <meshStandardMaterial {...blueMat} />
+        <primitive object={steelMat} attach="material" />
       </mesh>
 
-      {/* ─── ARROW STEM ─── (starts exactly at pillar tops) */}
-      <mesh position={[0, stemCY, 0]}>
-        <boxGeometry args={[stemW, stemH, D]} />
-        <meshStandardMaterial {...blueMat} />
-      </mesh>
+      {/* ── ARROW — bobs independently via arrowRef ────────────────────── */}
+      <group ref={arrowRef}>
 
-      {/* ─── ARROW HEAD ─── (4-sided pyramid, base starts exactly at stem top) */}
-      <mesh position={[0, coneCY, 0]}>
-        {/* ConeGeometry(radius, height, radialSegments) — 4 segments = square/diamond cross-section */}
-        <coneGeometry args={[coneR, coneH, 4]} />
-        <meshStandardMaterial {...blueMat} />
-      </mesh>
+        {/* Stem */}
+        <mesh position={[0, stemCY, 0]}>
+          <boxGeometry args={[stemW, stemH, D]} />
+          <primitive object={fresnelArrowMat} attach="material" />
+        </mesh>
+
+        {/* Arrowhead (4-sided pyramid) */}
+        <mesh position={[0, coneCY, 0]}>
+          <coneGeometry args={[coneR, coneH, 4]} />
+          <primitive object={fresnelArrowMat} attach="material" />
+        </mesh>
+
+      </group>
 
     </group>
   );
