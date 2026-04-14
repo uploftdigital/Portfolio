@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 import ScrollTrigger from 'gsap/ScrollTrigger';
 
@@ -39,7 +39,7 @@ const PROJECTS: ProjectData[] = [
   },
 ];
 
-function ProjectOverlay({ project }: { project: ProjectData }) {
+function ProjectOverlay({ project, isMobile }: { project: ProjectData; isMobile: boolean }) {
   const cardRef = useRef<HTMLDivElement>(null);
   const isRight = project.align === 'right';
 
@@ -48,33 +48,172 @@ function ProjectOverlay({ project }: { project: ProjectData }) {
     if (!el) return;
 
     const ctx = gsap.context(() => {
-      gsap.set(el, { opacity: 0, x: isRight ? 60 : -60 });
+      gsap.set(el, { opacity: 0, y: isMobile ? 30 : 0, x: isMobile ? 0 : (isRight ? 60 : -60) });
 
       ScrollTrigger.create({
         trigger: el,
-        start: 'top 75%',
-        end: 'bottom 25%',
+        start: 'top 80%',
+        end: 'bottom 20%',
         onEnter: () =>
-          gsap.to(el, { opacity: 1, x: 0, duration: 0.9, ease: 'power3.out' }),
+          gsap.to(el, { opacity: 1, x: 0, y: 0, duration: 0.9, ease: 'power3.out' }),
         onLeave: () =>
-          gsap.to(el, { opacity: 0, x: isRight ? -30 : 30, duration: 0.5, ease: 'power2.in' }),
+          gsap.to(el, {
+            opacity: 0,
+            x: isMobile ? 0 : (isRight ? -30 : 30),
+            y: isMobile ? -20 : 0,
+            duration: 0.5,
+            ease: 'power2.in',
+          }),
         onEnterBack: () =>
-          gsap.to(el, { opacity: 1, x: 0, duration: 0.7, ease: 'power3.out' }),
+          gsap.to(el, { opacity: 1, x: 0, y: 0, duration: 0.7, ease: 'power3.out' }),
         onLeaveBack: () =>
-          gsap.to(el, { opacity: 0, x: isRight ? 30 : -30, duration: 0.5, ease: 'power2.in' }),
+          gsap.to(el, {
+            opacity: 0,
+            x: isMobile ? 0 : (isRight ? 30 : -30),
+            y: isMobile ? 20 : 0,
+            duration: 0.5,
+            ease: 'power2.in',
+          }),
       });
     });
 
     return () => ctx.revert();
-  }, [isRight]);
+  }, [isRight, isMobile]);
 
+  if (isMobile) {
+    // On mobile: card sits at bottom of its viewport-height section
+    // so the 3D laptop is visible in the top half, text in the bottom half
+    return (
+      <div
+        style={{
+          position: 'absolute',
+          bottom: 0,
+          left: 0,
+          right: 0,
+          padding: '2rem 1.5rem',
+          background: 'linear-gradient(to top, rgba(3,3,3,0.98) 70%, transparent)',
+        }}
+      >
+        <div ref={cardRef}>
+          <p
+            style={{
+              fontFamily: 'var(--font-dm)',
+              fontSize: '0.65rem',
+              letterSpacing: '0.25em',
+              color: '#1a6bff',
+              textTransform: 'uppercase',
+              marginBottom: '0.5rem',
+            }}
+          >
+            Project {project.index}
+          </p>
+
+          <h2
+            style={{
+              fontFamily: 'var(--font-cormorant)',
+              fontSize: 'clamp(2rem, 8vw, 2.8rem)',
+              fontWeight: 400,
+              lineHeight: 1.05,
+              color: '#f0f0f0',
+              marginBottom: '0.4rem',
+            }}
+          >
+            {project.title}
+          </h2>
+
+          <p
+            style={{
+              fontFamily: 'var(--font-dm)',
+              fontSize: '0.62rem',
+              letterSpacing: '0.18em',
+              textTransform: 'uppercase',
+              color: '#555',
+              marginBottom: '1rem',
+            }}
+          >
+            {project.category}
+          </p>
+
+          <div
+            style={{
+              width: '2rem',
+              height: '1px',
+              background: 'rgba(26, 107, 255, 0.5)',
+              marginBottom: '1rem',
+            }}
+          />
+
+          <p
+            style={{
+              fontFamily: 'var(--font-dm)',
+              fontSize: '0.8rem',
+              lineHeight: 1.7,
+              color: '#888',
+              marginBottom: '1.2rem',
+              maxWidth: '340px',
+            }}
+          >
+            {project.description}
+          </p>
+
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem', marginBottom: '1.2rem' }}>
+            {project.tags.map((tag) => (
+              <span
+                key={tag}
+                style={{
+                  fontFamily: 'var(--font-dm)',
+                  fontSize: '0.58rem',
+                  letterSpacing: '0.15em',
+                  textTransform: 'uppercase',
+                  color: '#888',
+                  border: '1px solid rgba(255,255,255,0.08)',
+                  padding: '0.25rem 0.6rem',
+                }}
+              >
+                {tag}
+              </span>
+            ))}
+          </div>
+
+          <a
+            href={project.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              fontFamily: 'var(--font-dm)',
+              fontSize: '0.65rem',
+              letterSpacing: '0.2em',
+              textTransform: 'uppercase',
+              color: '#1a6bff',
+              textDecoration: 'none',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '0.5rem',
+            }}
+          >
+            Visit Live Site
+            <svg width="12" height="9" viewBox="0 0 12 9" fill="none">
+              <path
+                d="M1 4.5H11M7.5 1L11 4.5L7.5 8"
+                stroke="currentColor"
+                strokeWidth="1.4"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </a>
+        </div>
+      </div>
+    );
+  }
+
+  // Desktop: absolute centered overlay on the side
   return (
     <div
       className={`absolute top-1/2 -translate-y-1/2 ${isRight ? 'right-[8vw]' : 'left-[8vw]'}`}
       style={{ maxWidth: 'min(380px, 30vw)' }}
     >
       <div ref={cardRef}>
-        {/* Index number */}
         <p
           style={{
             fontFamily: 'var(--font-cormorant)',
@@ -88,7 +227,6 @@ function ProjectOverlay({ project }: { project: ProjectData }) {
           Project {project.index}
         </p>
 
-        {/* Title */}
         <h2
           style={{
             fontFamily: 'var(--font-cormorant)',
@@ -102,7 +240,6 @@ function ProjectOverlay({ project }: { project: ProjectData }) {
           {project.title}
         </h2>
 
-        {/* Category */}
         <p
           style={{
             fontFamily: 'var(--font-dm)',
@@ -116,7 +253,6 @@ function ProjectOverlay({ project }: { project: ProjectData }) {
           {project.category}
         </p>
 
-        {/* Divider */}
         <div
           style={{
             width: '2.5rem',
@@ -126,7 +262,6 @@ function ProjectOverlay({ project }: { project: ProjectData }) {
           }}
         />
 
-        {/* Description */}
         <p
           style={{
             fontFamily: 'var(--font-dm)',
@@ -139,7 +274,6 @@ function ProjectOverlay({ project }: { project: ProjectData }) {
           {project.description}
         </p>
 
-        {/* Tags */}
         <div className="flex flex-wrap gap-2 mb-5">
           {project.tags.map((tag) => (
             <span
@@ -159,17 +293,18 @@ function ProjectOverlay({ project }: { project: ProjectData }) {
           ))}
         </div>
 
-        {/* CTA Link */}
         <a
           href={project.url}
           target="_blank"
           rel="noopener noreferrer"
-          className="group inline-flex items-center gap-2 text-blue-accent hover:text-blue-glow transition-colors duration-300"
+          className="group inline-flex items-center gap-2 hover:opacity-80 transition-opacity duration-300"
           style={{
             fontFamily: 'var(--font-dm)',
             fontSize: '0.68rem',
             letterSpacing: '0.2em',
             textTransform: 'uppercase',
+            color: '#1a6bff',
+            textDecoration: 'none',
           }}
         >
           Visit Live Site
@@ -195,22 +330,29 @@ function ProjectOverlay({ project }: { project: ProjectData }) {
 }
 
 export default function ProjectShowcase() {
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 768);
+    check();
+    window.addEventListener('resize', check);
+    return () => window.removeEventListener('resize', check);
+  }, []);
+
   return (
     <section id="work" style={{ position: 'relative' }}>
-      {/* Section for project 1 — occupies the second 100vh of the 300vh container */}
       <div
         style={{ height: '100vh', position: 'relative' }}
         aria-label={`Project: ${PROJECTS[0].title}`}
       >
-        <ProjectOverlay project={PROJECTS[0]} />
+        <ProjectOverlay project={PROJECTS[0]} isMobile={isMobile} />
       </div>
 
-      {/* Section for project 2 — occupies the third 100vh of the 300vh container */}
       <div
         style={{ height: '100vh', position: 'relative' }}
         aria-label={`Project: ${PROJECTS[1].title}`}
       >
-        <ProjectOverlay project={PROJECTS[1]} />
+        <ProjectOverlay project={PROJECTS[1]} isMobile={isMobile} />
       </div>
     </section>
   );

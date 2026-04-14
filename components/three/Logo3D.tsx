@@ -85,6 +85,7 @@ const steelMat = new THREE.ShaderMaterial({
 export default function Logo3D() {
   const groupRef = useRef<THREE.Group>(null);
   const arrowRef = useRef<THREE.Group>(null);
+  const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
 
   useFrame(({ clock }) => {
     if (groupRef.current) {
@@ -124,7 +125,7 @@ export default function Logo3D() {
   const coneCY = stemTop + coneH / 2;
 
   return (
-    <group ref={groupRef} position={[0.8, 0.0, 5.2]} scale={0.58}>
+    <group ref={groupRef} position={isMobile ? [0, -0.3, 5.2] : [0.8, 0.0, 5.2]} scale={isMobile ? 0.44 : 0.58}>
 
       {/* ── U FRAME ────────────────────────────────────────────────────── */}
 

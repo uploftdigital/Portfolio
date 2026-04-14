@@ -53,7 +53,7 @@ export default function Hero() {
     <section
       ref={containerRef}
       className="relative flex flex-col justify-center"
-      style={{ height: '100vh', paddingLeft: 'clamp(2rem, 8vw, 9rem)' }}
+      style={{ height: '100svh', paddingLeft: 'clamp(1.25rem, 6vw, 9rem)', paddingRight: 'clamp(1.25rem, 6vw, 9rem)' }}
     >
       {/* Nav */}
       <nav
