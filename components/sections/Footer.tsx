@@ -13,10 +13,6 @@ export default function Footer() {
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      // Set initial state via GSAP (not inline CSS) so ScrollTrigger
-      // can always override it — avoids elements stuck at opacity:0
-      gsap.set([headingRef.current, contentRef.current], { opacity: 0 });
-
       gsap.fromTo(
         headingRef.current,
         { opacity: 0, y: 50 },
@@ -42,14 +38,7 @@ export default function Footer() {
       );
     }, sectionRef);
 
-    // Refresh after a tick to ensure ScrollTrigger has correct positions
-    // after Lenis and layout have fully settled
-    const rafId = requestAnimationFrame(() => ScrollTrigger.refresh());
-
-    return () => {
-      cancelAnimationFrame(rafId);
-      ctx.revert();
-    };
+    return () => ctx.revert();
   }, []);
 
   return (
@@ -78,13 +67,13 @@ export default function Footer() {
       <p
         style={{
           fontFamily: 'var(--font-cormorant)',
-          fontSize: 'clamp(0.9rem, 1.5vw, 1.05rem)',
+          fontSize: 'clamp(0.9rem, 1.4vw, 1.05rem)',
           fontStyle: 'italic',
           fontWeight: 300,
           color: '#4a7aff',
-          letterSpacing: '0.04em',
+          letterSpacing: '0.03em',
           marginBottom: '1.5rem',
-          opacity: 0.8,
+          opacity: 0.75,
         }}
       >
         We lift businesses and keep them elevated.
@@ -101,10 +90,11 @@ export default function Footer() {
           color: '#f0f0f0',
           maxWidth: '820px',
           marginBottom: 'clamp(3rem, 5vh, 4rem)',
+          opacity: 0,
         }}
       >
-        Ready to build something{' '}
-        <em style={{ color: '#1a6bff', fontStyle: 'italic' }}>extraordinary?</em>
+        Ready to elevate your{' '}
+        <em style={{ color: '#1a6bff', fontStyle: 'italic' }}>digital presence?</em>
       </h2>
 
       <div
@@ -115,6 +105,7 @@ export default function Footer() {
           justifyContent: 'space-between',
           alignItems: 'flex-end',
           gap: '3rem',
+          opacity: 0,
         }}
       >
         {/* Contact CTA */}
@@ -129,8 +120,9 @@ export default function Footer() {
               marginBottom: '2rem',
             }}
           >
-            We partner with companies building the next generation of digital
-            products. Let&apos;s talk about your vision.
+            We work with businesses that want more than just a website — they want
+            something sharper, stronger, and built to position them better online.
+            Let&apos;s build something that moves your brand upward.
           </p>
           <a
             href="mailto:uploftdigital@gmail.com"
@@ -156,8 +148,8 @@ export default function Footer() {
           </a>
         </div>
 
-        {/* Bottom right: logo + links */}
-        <div style={{ textAlign: 'right' }}>
+        {/* Bottom right: logo + links — right-aligned desktop, left-aligned mobile */}
+        <div className="footer-brand-block" style={{ textAlign: 'right' }}>
           <p
             style={{
               fontFamily: 'var(--font-dm)',

@@ -20,7 +20,7 @@
 
 html,
 body {
-  width: 100%;
+  max-width: 100vw;
   overflow-x: hidden;
   /* TRANSPARENT — the fixed WebGL canvas provides the black background.
      A solid body color would paint over the canvas (z-index: -1 sits
@@ -86,5 +86,16 @@ body::before {
   * {
     animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;
+  }
+}
+
+/* Footer brand block — right-aligned desktop, left-aligned mobile */
+@media (max-width: 640px) {
+  .footer-brand-block {
+    text-align: left !important;
+    width: 100%;
+  }
+  .footer-brand-block > div {
+    justify-content: flex-start !important;
   }
 }

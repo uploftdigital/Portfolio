@@ -9,23 +9,23 @@ gsap.registerPlugin(ScrollTrigger);
 const SERVICES = [
   {
     num: '01',
-    title: 'WebGL & 3D\nExperiences',
-    desc: 'Scroll-driven 3D narratives, product configurators, and immersive environments built on Three.js and React Three Fiber.',
+    title: 'Web\nExperiences',
+    desc: 'High-quality websites and immersive digital experiences built to help brands stand out online with clarity, motion, and strong visual presence.',
   },
   {
     num: '02',
-    title: 'Next.js\nApplications',
-    desc: 'Production-grade web apps with App Router, TypeScript strict mode, ISR, and sub-second load times.',
+    title: 'Next.js\nDevelopment',
+    desc: 'Modern frontend builds powered by Next.js, TypeScript, and scalable architecture — optimized for responsiveness, maintainability, and smooth performance.',
   },
   {
     num: '03',
     title: 'Motion &\nInteraction',
-    desc: 'GSAP-orchestrated animation systems, Lenis smooth scroll, and micro-interaction design at enterprise scale.',
+    desc: 'Thoughtful animation, smooth scrolling, and polished micro-interactions that make digital products feel more alive, premium, and engaging.',
   },
   {
     num: '04',
     title: 'Digital\nStrategy',
-    desc: 'Architecture reviews, performance audits, design-system consulting, and long-term product roadmaps.',
+    desc: 'Website direction, UX thinking, structure refinement, and performance-focused planning to help businesses present themselves better online and grow with confidence.',
   },
 ];
 
@@ -123,10 +123,23 @@ export default function Services() {
             maxWidth: '560px',
           }}
         >
-          Capabilities Built for
+          Capabilities built to
           <br />
-          <em style={{ color: '#1a6bff', fontStyle: 'italic' }}>Enterprise Scale.</em>
+          <em style={{ color: '#1a6bff', fontStyle: 'italic' }}>elevate modern brands.</em>
         </h2>
+        <p
+          style={{
+            fontFamily: 'var(--font-dm)',
+            fontSize: '0.85rem',
+            lineHeight: 1.8,
+            color: '#555',
+            maxWidth: '520px',
+            marginTop: '1.5rem',
+          }}
+        >
+          From visual identity on screen to performance-focused frontends, we create
+          digital experiences that are clean, credible, and built to leave a lasting impression.
+        </p>
       </div>
 
       {/* Grid */}

@@ -19,12 +19,12 @@ const dmSans = DM_Sans({
 });
 
 export const metadata: Metadata = {
-  title: 'Uploft Digital — Enterprise WebGL Agency',
+  title: 'Uploft Digital — We lift businesses and keep them elevated.',
   description:
-    'Uploft Digital crafts world-class 3D web experiences and enterprise digital products that move at 60FPS.',
+    'Uploft Digital builds premium websites, modern interfaces, and high-impact digital experiences that help businesses stand out and grow online.',
   openGraph: {
     title: 'Uploft Digital',
-    description: 'Enterprise WebGL & Digital Product Studio',
+    description: 'Premium digital experiences for modern businesses.',
     type: 'website',
   },
 };

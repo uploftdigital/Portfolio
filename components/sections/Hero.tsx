@@ -53,7 +53,7 @@ export default function Hero() {
     <section
       ref={containerRef}
       className="relative flex flex-col justify-center"
-      style={{ height: '100svh', paddingLeft: 'clamp(1.25rem, 6vw, 9rem)', paddingRight: 'clamp(1.25rem, 6vw, 9rem)' }}
+      style={{ height: '100vh', paddingLeft: 'clamp(2rem, 8vw, 9rem)', paddingRight: 'clamp(2rem, 8vw, 9rem)', paddingTop: 'clamp(5rem, 10vh, 7rem)' }}
     >
       {/* Nav */}
       <nav
@@ -103,16 +103,15 @@ export default function Hero() {
       </nav>
 
       {/* Hero Content */}
-      <div ref={badgeRef} style={{ opacity: 0, marginBottom: '2rem' }}>
+      <div ref={badgeRef} style={{ opacity: 0, marginBottom: '1.75rem' }}>
         <p
           style={{
             fontFamily: 'var(--font-cormorant)',
-            fontSize: 'clamp(0.95rem, 1.8vw, 1.15rem)',
+            fontSize: 'clamp(0.95rem, 1.6vw, 1.1rem)',
             fontStyle: 'italic',
             fontWeight: 300,
             color: '#4a7aff',
-            letterSpacing: '0.04em',
-            lineHeight: 1.4,
+            letterSpacing: '0.03em',
           }}
         >
           We lift businesses and keep them elevated.
@@ -123,15 +122,15 @@ export default function Hero() {
         <h1
           style={{
             fontFamily: 'var(--font-cormorant)',
-            fontSize: 'clamp(3.2rem, 7.5vw, 7.5rem)',
+            fontSize: 'clamp(2.8rem, 5.5vw, 5.8rem)',
             fontWeight: 300,
             lineHeight: 1.0,
             letterSpacing: '-0.02em',
             color: '#f0f0f0',
-            maxWidth: '800px',
+            maxWidth: '680px',
           }}
         >
-          We Build the
+          We build digital experiences
           <br />
           <em
             style={{
@@ -140,7 +139,7 @@ export default function Hero() {
               fontWeight: 400,
             }}
           >
-            Extraordinary.
+            that elevate brands.
           </em>
         </h1>
       </div>
@@ -158,8 +157,8 @@ export default function Hero() {
           letterSpacing: '0.02em',
         }}
       >
-        WebGL-first digital products for enterprises that demand flawless
-        performance. 60&thinsp;FPS guaranteed. Zero compromises.
+        Premium websites, modern interfaces, and high-impact digital experiences
+        designed to help businesses stand out, earn trust, and grow with confidence online.
       </p>
 
       <div
@@ -199,31 +198,21 @@ export default function Hero() {
         }}
       >
         {[
-          { val: '60', unit: 'FPS', label: 'Guaranteed' },
-          { val: '40+', unit: '', label: 'Shipped Projects' },
-          { val: '100%', unit: '', label: 'TypeScript' },
-        ].map(({ val, unit, label }) => (
+          { label: 'Performance-led' },
+          { label: 'Design-driven' },
+          { label: 'TypeScript-first' },
+        ].map(({ label }) => (
           <div key={label}>
-            <p
-              style={{
-                fontFamily: 'var(--font-cormorant)',
-                fontSize: 'clamp(2rem, 3vw, 2.8rem)',
-                fontWeight: 500,
-                color: '#f0f0f0',
-                lineHeight: 1,
-              }}
-            >
-              {val}
-              <span style={{ color: '#1a6bff', fontSize: '0.6em' }}>{unit}</span>
-            </p>
             <p
               style={{
                 fontFamily: 'var(--font-dm)',
                 fontSize: '0.65rem',
-                letterSpacing: '0.18em',
+                letterSpacing: '0.2em',
                 textTransform: 'uppercase',
-                color: '#555',
-                marginTop: '0.4rem',
+                color: '#666',
+                border: '1px solid rgba(255,255,255,0.07)',
+                padding: '0.45rem 0.9rem',
+                whiteSpace: 'nowrap',
               }}
             >
               {label}
@@ -246,7 +235,7 @@ export default function Hero() {
             color: '#888',
           }}
         >
-          Scroll
+          Scroll to explore
         </span>
         <div className="w-px h-10 bg-gradient-to-b from-white/30 to-transparent animate-pulse" />
       </div>
