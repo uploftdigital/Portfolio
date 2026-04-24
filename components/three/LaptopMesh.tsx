@@ -93,6 +93,11 @@ function LaptopInner({ texturePath, position, rotationY = 0 }: LaptopMeshProps) 
   );
 }
 
+// Preload textures so they're cached before the component mounts.
+// Prevents blank screens caused by CDN cold-start latency on Vercel.
+useTexture.preload('/cafe.webp');
+useTexture.preload('/boutique.webp');
+
 export default function LaptopMesh(props: LaptopMeshProps) {
   return (
     <Suspense fallback={null}>

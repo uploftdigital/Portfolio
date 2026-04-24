@@ -74,6 +74,22 @@ export default function Footer() {
         }}
       />
 
+      {/* Brand tagline */}
+      <p
+        style={{
+          fontFamily: 'var(--font-cormorant)',
+          fontSize: 'clamp(0.9rem, 1.5vw, 1.05rem)',
+          fontStyle: 'italic',
+          fontWeight: 300,
+          color: '#4a7aff',
+          letterSpacing: '0.04em',
+          marginBottom: '1.5rem',
+          opacity: 0.8,
+        }}
+      >
+        We lift businesses and keep them elevated.
+      </p>
+
       {/* CTA headline */}
       <h2
         ref={headingRef}
@@ -117,11 +133,11 @@ export default function Footer() {
             products. Let&apos;s talk about your vision.
           </p>
           <a
-            href="mailto:hello@uploftdigital.com"
+            href="mailto:uploftdigital@gmail.com"
             className="group inline-flex items-center gap-3 bg-blue-accent text-white px-8 py-4 text-xs tracking-[0.2em] uppercase hover:bg-blue-deep transition-all duration-300"
             style={{ fontFamily: 'var(--font-dm)' }}
           >
-            hello@uploftdigital.com
+            uploftdigital@gmail.com
             <svg
               width="13"
               height="10"
@@ -162,29 +178,28 @@ export default function Footer() {
               marginBottom: '2.5rem',
             }}
           >
-            {['Twitter', 'LinkedIn', 'Dribbble', 'GitHub'].map((link) => (
-              <a
-                key={link}
-                href="#"
-                style={{
-                  fontFamily: 'var(--font-dm)',
-                  fontSize: '0.62rem',
-                  letterSpacing: '0.18em',
-                  textTransform: 'uppercase',
-                  color: '#444',
-                  transition: 'color 0.25s ease',
-                  textDecoration: 'none',
-                }}
-                onMouseEnter={(e) =>
-                  ((e.target as HTMLAnchorElement).style.color = '#1a6bff')
-                }
-                onMouseLeave={(e) =>
-                  ((e.target as HTMLAnchorElement).style.color = '#444')
-                }
-              >
-                {link}
-              </a>
-            ))}
+            <a
+              href="https://www.instagram.com/uploftdigital/"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                fontFamily: 'var(--font-dm)',
+                fontSize: '0.62rem',
+                letterSpacing: '0.18em',
+                textTransform: 'uppercase',
+                color: '#444',
+                transition: 'color 0.25s ease',
+                textDecoration: 'none',
+              }}
+              onMouseEnter={(e) =>
+                ((e.target as HTMLAnchorElement).style.color = '#1a6bff')
+              }
+              onMouseLeave={(e) =>
+                ((e.target as HTMLAnchorElement).style.color = '#444')
+              }
+            >
+              Instagram
+            </a>
           </div>
           <p
             style={{

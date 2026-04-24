@@ -103,22 +103,20 @@ export default function Hero() {
       </nav>
 
       {/* Hero Content */}
-      <div className="max-w-3xl" style={{ opacity: 0 }} ref={badgeRef}>
-        <div
-          className="inline-flex items-center gap-2 border border-white/10 px-4 py-1.5 mb-8"
+      <div ref={badgeRef} style={{ opacity: 0, marginBottom: '2rem' }}>
+        <p
           style={{
-            fontFamily: 'var(--font-dm)',
-            fontSize: '0.7rem',
-            letterSpacing: '0.22em',
-            textTransform: 'uppercase',
-            color: '#888',
+            fontFamily: 'var(--font-cormorant)',
+            fontSize: 'clamp(0.95rem, 1.8vw, 1.15rem)',
+            fontStyle: 'italic',
+            fontWeight: 300,
+            color: '#4a7aff',
+            letterSpacing: '0.04em',
+            lineHeight: 1.4,
           }}
         >
-          <span
-            className="inline-block w-1.5 h-1.5 rounded-full bg-blue-accent animate-pulse"
-          />
-          Enterprise Digital Studio · Est. 2020
-        </div>
+          We lift businesses and keep them elevated.
+        </p>
       </div>
 
       <div ref={headlineRef} style={{ opacity: 0 }}>
